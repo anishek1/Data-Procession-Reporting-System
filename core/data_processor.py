@@ -32,16 +32,22 @@ def load_csv(filepath: str) -> Dict[str, List[Any]]:
     """
     filepath = Path(filepath)
 
+    # Ensure the file exists before attempting to read
     if not filepath.exists():
         raise DPRSFileNotFoundError(f"File not found: {filepath}")
 
+    # Validate that we only process CSV files in this function
     if filepath.suffix.lower() != '.csv':
         raise InvalidFileTypeError(f"Expected .csv file, got {filepath.suffix}")
 
     try:
+        # Open file with utf-8 encoding to prevent Unicode errors
         with open(filepath, 'r', encoding='utf-8') as f:
+            # Use DictReader to automatically map headers to values
             reader = csv.DictReader(f)
+            # Extract headers, fallback to empty list if file is empty
             headers = list(reader.fieldnames) if reader.fieldnames else []
+            # Read all rows into memory as a list of dictionaries
             rows = list(reader)
 
         return {
@@ -70,22 +76,28 @@ def load_json(filepath: str) -> Dict[str, List[Any]]:
     """
     filepath = Path(filepath)
 
+    # Check existence to provide a clear error message early
     if not filepath.exists():
         raise DPRSFileNotFoundError(f"File not found: {filepath}")
 
+    # Enforce correct file extension
     if filepath.suffix.lower() != '.json':
         raise InvalidFileTypeError(f"Expected .json file, got {filepath.suffix}")
 
     try:
+        # Load the entire JSON structure into memory
         with open(filepath, 'r', encoding='utf-8') as f:
             data = json.load(f)
 
+        # The application expects a list of records (array of JSON objects)
         if not isinstance(data, list):
             raise ValueError("JSON must be an array of objects")
 
+        # Handle empty JSON arrays gracefully
         if len(data) == 0:
             return {'headers': [], 'rows': [], 'row_count': 0, 'column_count': 0}
 
+        # Extract headers from the keys of the first object
         headers = list(data[0].keys())
 
         return {
@@ -119,15 +131,18 @@ def load_file(filepath: str) -> Dict[str, Any]:
 
     filepath = Path(filepath)
 
+    # Route the file to the appropriate loader based on its extension
     if filepath.suffix.lower() == '.csv':
         data = load_csv(str(filepath))
     elif filepath.suffix.lower() == '.json':
         data = load_json(str(filepath))
     else:
+        # Reject unsupported files immediately
         raise InvalidFileTypeError(
             f"Unsupported file format: {filepath.suffix}. Use .csv or .json"
         )
 
+    # Cache the loaded data in memory for subsequent operations
     _loaded_data = data
 
     return {
@@ -168,22 +183,29 @@ def compute_statistics(column_name: Optional[str] = None) -> Dict[str, Any]:
         return {'error': 'No data rows to process'}
 
     stats = {}
+    # If the user didn't specify a column, process all headers from the file
     columns_to_process = [column_name] if column_name else headers
 
     for col in columns_to_process:
+        # Skip columns that don't actually exist in the data
         if col not in headers:
             stats[col] = {'error': f"Column '{col}' not found"}
             continue
 
         numeric_values = []
+        # Iterate over every row to extract values for the current column
         for row in rows:
             val = row.get(col)
+            # Only process non-null, non-empty values
             if val is not None and val != '':
                 try:
+                    # Attempt to cast the value to a float for math operations
                     numeric_values.append(float(val))
                 except (ValueError, TypeError):
+                    # Silently ignore non-numeric values (like strings 'Male', 'Female')
                     pass
 
+        # If we successfully extracted any numeric values, compute their stats
         if numeric_values:
             stats[col] = _compute_column_stats(numeric_values, col)
 

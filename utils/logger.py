@@ -33,20 +33,21 @@ def setup_logger(
     logger = logging.getLogger(name)
     logger.setLevel(getattr(logging, log_level.upper(), logging.INFO))
 
-    # Avoid adding duplicate handlers on repeated calls
+    # Avoid adding duplicate handlers on repeated calls (which would cause duplicate logs)
     if logger.handlers:
         return logger
 
-    # Create logs directory if needed
+    # Create logs directory if it doesn't exist, to prevent FileNotFoundError
     log_path = Path(log_file)
     log_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # Define the structure of log messages: timestamp, level, logger name, and message
     formatter = logging.Formatter(
         '[%(asctime)s] [%(levelname)s] [%(name)s] - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
 
-    # Rotating file handler
+    # Rotating file handler ensures log files don't grow infinitely large
     file_handler = logging.handlers.RotatingFileHandler(
         log_file,
         maxBytes=max_bytes,

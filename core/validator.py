@@ -38,14 +38,18 @@ class Schema:
             Tuple of (is_valid, error_message). error_message is None if valid.
         """
         for field_name, field_config in self.fields.items():
+            # Check if the schema enforces this field as mandatory
             if field_config.get('required', False):
+                # A field is considered missing if the key doesn't exist, is None, or is an empty string
                 if field_name not in row or row[field_name] is None or row[field_name] == '':
                     return False, f"Required field missing: {field_name}"
 
+            # Only validate the type if a value is actually present
             if field_name in row and row[field_name] is not None and row[field_name] != '':
                 value = row[field_name]
                 expected_type = field_config.get('type', 'string')
 
+                # If the value doesn't match the expected type, fail the validation
                 if not self._check_type(value, expected_type):
                     return False, (
                         f"Field '{field_name}': expected {expected_type}, "
@@ -98,10 +102,13 @@ def validate_schema(data: Dict[str, Any], schema: Schema) -> Dict[str, Any]:
     invalid_rows = []
 
     for idx, row in enumerate(rows):
+        # Validate each row individually using the provided schema object
         is_valid, error_msg = schema.validate(row)
+        
         if is_valid:
             valid_rows.append(row)
         else:
+            # Keep track of invalid rows and their specific errors for reporting
             invalid_rows.append({'row_index': idx, 'error': error_msg, 'data': row})
 
     if invalid_rows:
@@ -131,7 +138,10 @@ def clean_data(rows: List[Dict[str, Any]], schema: Schema) -> List[Dict[str, Any
     Returns:
         List of rows that passed validation
     """
+    # Filter out rows that do not pass schema validation, keeping only valid ones
     cleaned = [row for row in rows if schema.validate(row)[0]]
+    
+    # Calculate how many rows were dropped for logging purposes
     removed = len(rows) - len(cleaned)
     logger.info(
         f"Data cleaning: {len(rows)} rows → {len(cleaned)} rows "
