@@ -1,7 +1,7 @@
 """Tests for logger module."""
 
 import logging
-from dprs.utils.logger import setup_logger
+from utils.logger import setup_logger
 
 
 def test_logger_creation():

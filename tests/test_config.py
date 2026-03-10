@@ -2,7 +2,7 @@
 
 import pytest
 import json
-from dprs.utils.config import Config
+from utils.config import Config
 
 
 @pytest.fixture

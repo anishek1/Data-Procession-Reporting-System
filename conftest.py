@@ -2,7 +2,7 @@
 conftest.py — pytest configuration for DPRS.
 
 Inserts the parent directory into sys.path so that
-'from dprs.core.xxx import ...' works when pytest
+'from core.xxx import ...' works when pytest
 is run from inside the dprs/ project root.
 """
 

@@ -50,8 +50,8 @@ We're currently in active development. The CLI interface is coming in Sprint 2.
 For now, you can import and use the modules directly in a Python script or shell:
 
 ```python
-from dprs.core.data_processor import load_file, compute_statistics
-from dprs.core.validator import Schema, validate_schema
+from core.data_processor import load_file, compute_statistics
+from core.validator import Schema, validate_schema
 
 # Load your data
 result = load_file("input/sample_data.csv")

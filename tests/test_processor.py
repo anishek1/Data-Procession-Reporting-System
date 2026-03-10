@@ -2,12 +2,12 @@
 
 import pytest
 import json
-from dprs.core.data_processor import (
+from core.data_processor import (
     load_csv, load_json, load_file,
     compute_statistics, clear_data, get_loaded_data
 )
-from dprs.core.exceptions import FileNotFoundError as DPRSFileNotFoundError
-from dprs.core.exceptions import InvalidFileTypeError
+from core.exceptions import FileNotFoundError as DPRSFileNotFoundError
+from core.exceptions import InvalidFileTypeError
 
 
 # ── Fixtures ─────────────────────────────────────────────────────────────────

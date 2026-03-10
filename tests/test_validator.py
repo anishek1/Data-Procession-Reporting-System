@@ -1,8 +1,8 @@
 """Tests for validator module."""
 
 import pytest
-from dprs.core.validator import Schema, validate_schema, clean_data, check_missing_values
-from dprs.core.exceptions import SchemaValidationError
+from core.validator import Schema, validate_schema, clean_data, check_missing_values
+from core.exceptions import SchemaValidationError
 
 
 # ── Fixtures ─────────────────────────────────────────────────────────────────
