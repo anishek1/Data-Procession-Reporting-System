@@ -38,7 +38,9 @@ def load_csv(filepath: str) -> Dict[str, List[Any]]:
 
     # Validate that we only process CSV files in this function
     if filepath.suffix.lower() != '.csv':
-        raise InvalidFileTypeError(f"Expected .csv file, got {filepath.suffix}")
+        raise InvalidFileTypeError(
+            f"Expected .csv file, got {filepath.suffix}"
+        )
 
     try:
         # Open file with utf-8 encoding to prevent Unicode errors

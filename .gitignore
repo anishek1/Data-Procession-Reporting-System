@@ -16,9 +16,6 @@ env/
 .coverage
 htmlcov/
 
-# Logs and output (auto-generated)
-logs/*.log
-output/*
 
 # Egg info
 *.egg-info/

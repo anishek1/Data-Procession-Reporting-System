@@ -15,6 +15,7 @@ def main():
     )
     # Subparsers will be added in Sprint 2
     args = parser.parse_args()
+    return args
 
 
 if __name__ == "__main__":
