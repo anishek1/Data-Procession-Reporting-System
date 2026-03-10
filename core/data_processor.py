@@ -84,7 +84,9 @@ def load_json(filepath: str) -> Dict[str, List[Any]]:
 
     # Enforce correct file extension
     if filepath.suffix.lower() != '.json':
-        raise InvalidFileTypeError(f"Expected .json file, got {filepath.suffix}")
+        raise InvalidFileTypeError(
+            f"Expected .json file, got {filepath.suffix}"
+        )
 
     try:
         # Load the entire JSON structure into memory
@@ -97,7 +99,12 @@ def load_json(filepath: str) -> Dict[str, List[Any]]:
 
         # Handle empty JSON arrays gracefully
         if len(data) == 0:
-            return {'headers': [], 'rows': [], 'row_count': 0, 'column_count': 0}
+            return {
+                'headers': [],
+                'rows': [],
+                'row_count': 0,
+                'column_count': 0
+            }
 
         # Extract headers from the keys of the first object
         headers = list(data[0].keys())
@@ -204,7 +211,7 @@ def compute_statistics(column_name: Optional[str] = None) -> Dict[str, Any]:
                     # Attempt to cast the value to a float for math operations
                     numeric_values.append(float(val))
                 except (ValueError, TypeError):
-                    # Silently ignore non-numeric values (like strings 'Male', 'Female')
+                    # Ignore non-numeric values (e.g. 'Male', 'Female')
                     pass
 
         # If we successfully extracted any numeric values, compute their stats
@@ -214,7 +221,9 @@ def compute_statistics(column_name: Optional[str] = None) -> Dict[str, Any]:
     return stats
 
 
-def _compute_column_stats(values: List[float], col_name: str) -> Dict[str, Any]:
+def _compute_column_stats(
+    values: List[float], col_name: str
+) -> Dict[str, Any]:
     """Compute statistics for a single numeric column."""
     import statistics
 

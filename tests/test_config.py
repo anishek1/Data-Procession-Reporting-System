@@ -2,9 +2,7 @@
 
 import pytest
 import json
-import tempfile
-from pathlib import Path
-from dprs.utils.config import Config, get_config, load_config
+from dprs.utils.config import Config
 
 
 @pytest.fixture
@@ -58,6 +56,6 @@ def test_config_invalid_json(tmp_path):
     """Test config fails with invalid JSON."""
     config_file = tmp_path / "bad.json"
     config_file.write_text("{ invalid json }")
-    
+
     with pytest.raises(ValueError):
         Config(str(config_file))

@@ -11,9 +11,9 @@ from dprs.core.exceptions import SchemaValidationError
 def sample_schema():
     """Standard schema used across multiple tests."""
     return Schema({
-        'name':   {'type': 'string',  'required': True},
-        'age':    {'type': 'integer', 'required': True},
-        'salary': {'type': 'float',   'required': False},
+        'name': {'type': 'string', 'required': True},
+        'age': {'type': 'integer', 'required': True},
+        'salary': {'type': 'float', 'required': False},
     })
 
 
@@ -21,8 +21,8 @@ def sample_schema():
 def valid_rows():
     """Three fully valid rows matching sample_schema."""
     return [
-        {'name': 'Alice',   'age': '30', 'salary': '50000'},
-        {'name': 'Bob',     'age': '25', 'salary': '45000'},
+        {'name': 'Alice', 'age': '30', 'salary': '50000'},
+        {'name': 'Bob', 'age': '25', 'salary': '45000'},
         {'name': 'Charlie', 'age': '35', 'salary': '60000'},
     ]
 
@@ -89,7 +89,7 @@ def test_validate_schema_raises_on_invalid(sample_schema):
     """validate_schema raises SchemaValidationError if any row is invalid."""
     bad_rows = [
         {'name': 'Alice', 'age': '30'},
-        {'name': '',      'age': '25'},   # empty required field
+        {'name': '', 'age': '25'},   # empty required field
     ]
     data = {'rows': bad_rows, 'headers': ['name', 'age']}
     with pytest.raises(SchemaValidationError):
@@ -101,8 +101,8 @@ def test_validate_schema_raises_on_invalid(sample_schema):
 def test_clean_data_removes_invalid_rows(sample_schema):
     """clean_data should keep only rows that pass validation."""
     rows = [
-        {'name': 'Alice',   'age': '30', 'salary': '50000'},
-        {'name': 'Bob',     'age': 'bad', 'salary': '45000'},  # invalid age
+        {'name': 'Alice', 'age': '30', 'salary': '50000'},
+        {'name': 'Bob', 'age': 'bad', 'salary': '45000'},  # invalid age
         {'name': 'Charlie', 'age': '35', 'salary': '60000'},
     ]
     cleaned = clean_data(rows, sample_schema)
@@ -122,14 +122,16 @@ def test_clean_data_all_valid(sample_schema, valid_rows):
 def test_check_missing_values_detects_gaps():
     """check_missing_values should detect None and empty-string as missing."""
     rows = [
-        {'name': 'Alice',   'age': '30', 'email': 'alice@example.com'},
-        {'name': 'Bob',     'age': '',   'email': None},
+        {'name': 'Alice', 'age': '30', 'email': 'alice@example.com'},
+        {'name': 'Bob', 'age': '', 'email': None},
         {'name': 'Charlie', 'age': '35', 'email': 'charlie@example.com'},
     ]
     missing = check_missing_values(rows)
     assert 'age' in missing
     assert missing['age']['missing_count'] == 1
-    assert missing['age']['missing_percentage'] == pytest.approx(33.33, abs=0.01)
+    assert missing['age']['missing_percentage'] == pytest.approx(
+        33.33, abs=0.01
+    )
     assert 'email' in missing
     assert missing['email']['missing_count'] == 1
 
@@ -138,7 +140,7 @@ def test_check_missing_values_no_gaps():
     """check_missing_values returns empty dict when all values are present."""
     rows = [
         {'name': 'Alice', 'age': '30'},
-        {'name': 'Bob',   'age': '25'},
+        {'name': 'Bob', 'age': '25'},
     ]
     missing = check_missing_values(rows)
     assert missing == {}

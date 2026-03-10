@@ -32,7 +32,9 @@ class Config:
         """Load (or reload) configuration from the JSON file."""
         # Ensure the config file actually exists before trying to read it
         if not self.config_file.exists():
-            raise FileNotFoundError(f"Config file not found: {self.config_file}")
+            raise FileNotFoundError(
+                f"Config file not found: {self.config_file}"
+            )
 
         try:
             # Parse the JSON file directly into the internal dictionary
@@ -75,7 +77,7 @@ def get_config() -> Config:
         Shared Config instance
     """
     global _config
-    # Implement lazy-loading: only instantiate the Config if it hasn't been created yet
+    # Implement lazy-loading: instantiate Config if hasn't been created yet
     if _config is None:
         _config = Config()
     return _config

@@ -6,7 +6,7 @@ Handles missing values, type checking, and data quality.
 """
 
 from typing import Dict, List, Any, Optional, Tuple
-from .exceptions import SchemaValidationError, DataIntegrityError
+from .exceptions import SchemaValidationError
 import logging
 
 logger = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ class Schema:
         for field_name, field_config in self.fields.items():
             # Check if the schema enforces this field as mandatory
             if field_config.get('required', False):
-                # A field is considered missing if the key doesn't exist, is None, or is an empty string
+                # Field is missing if key isn't in row, is None, or is empty
                 if field_name not in row or row[field_name] is None or row[field_name] == '':
                     return False, f"Required field missing: {field_name}"
 
@@ -104,7 +104,7 @@ def validate_schema(data: Dict[str, Any], schema: Schema) -> Dict[str, Any]:
     for idx, row in enumerate(rows):
         # Validate each row individually using the provided schema object
         is_valid, error_msg = schema.validate(row)
-        
+
         if is_valid:
             valid_rows.append(row)
         else:
@@ -140,7 +140,7 @@ def clean_data(rows: List[Dict[str, Any]], schema: Schema) -> List[Dict[str, Any
     """
     # Filter out rows that do not pass schema validation, keeping only valid ones
     cleaned = [row for row in rows if schema.validate(row)[0]]
-    
+
     # Calculate how many rows were dropped for logging purposes
     removed = len(rows) - len(cleaned)
     logger.info(
