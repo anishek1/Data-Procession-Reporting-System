@@ -339,10 +339,4 @@ See `PROJECT_STATE.md` for detailed sprint progress.
 - `PROJECT_STATE.md` — Current progress and status
 - `config.json` — Configuration template
 
-## License
 
-[Your License Here]
-
----
-
-*Last updated: [Today's Date]*
