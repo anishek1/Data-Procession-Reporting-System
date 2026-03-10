@@ -32,3 +32,6 @@ build/
 
 # Jupyter
 *.ipynb_checkpoints
+
+DPRS_Comprehensive_PRD.md
+DPRS_Sprint_Plan.md
