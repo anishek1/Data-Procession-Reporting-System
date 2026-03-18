@@ -6,10 +6,12 @@ from cli.main import main
 from core.exceptions import DPRSException
 
 @pytest.fixture
-def mock_sys_argv():
+def mock_sys_argv(monkeypatch):
     """Allows simulating command-line arguments."""
-    with patch('sys.argv', ['main.py']) as mock_argv:
-        yield mock_argv
+    fake_argv = ['main.py']
+    import sys
+    monkeypatch.setattr(sys, 'argv', fake_argv)
+    yield fake_argv
 
 @patch('cli.main.load_file')
 @patch('cli.main.compute_statistics')
