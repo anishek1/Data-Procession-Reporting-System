@@ -9,5 +9,5 @@ is run from inside the dprs/ project root.
 import sys
 import os
 
-# Add the parent of this file to sys.path, making 'dprs' importable as a package.
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the current directory (project root) to sys.path, making 'utils', 'core', etc. importable.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

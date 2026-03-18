@@ -33,5 +33,7 @@ build/
 DPRS_Comprehensive_PRD.md
 DPRS_Sprint_Plan.md
 
-output/
+# Logs and output
 logs/
+output/
+*.log

@@ -2,6 +2,7 @@
 
 import logging
 from utils.logger import setup_logger
+from utils.logger import get_logger
 
 
 def test_logger_creation():
@@ -54,3 +55,9 @@ def test_logger_multiple_calls(tmp_path):
     content = log_file.read_text()
     assert "From logger 1" in content
     assert "From logger 2" in content
+
+def test_get_logger_uses_config():
+    """Test get_logger returns a configured logger."""
+    logger = get_logger("dprs")
+    assert logger is not None
+    assert isinstance(logger, logging.Logger)

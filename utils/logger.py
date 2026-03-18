@@ -67,4 +67,21 @@ def setup_logger(
 
 
 # Module-level default logger
-logger = setup_logger(__name__)
+# Module-level default logger — reads settings from config.json if available
+def get_logger(name: str = "dprs") -> logging.Logger:
+    """Get a logger configured from config.json."""
+    try:
+        from utils.config import get_config
+        config = get_config()
+        return setup_logger(
+            name=name,
+            log_level=config["logging"]["level"],
+            log_file=config["logging"]["file"],
+            max_bytes=config["logging"]["max_bytes"],
+            backup_count=config["logging"]["backup_count"]
+        )
+    except Exception:
+        # If config isn't available, fall back to defaults
+        return setup_logger(name)
+
+logger = get_logger()

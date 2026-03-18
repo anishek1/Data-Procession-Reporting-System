@@ -1,5 +1,4 @@
-"""
-Configuration Management
+"""Configuration Management
 
 Loads and manages application configuration from config.json.
 All configuration comes from this module, never from os.environ directly.
