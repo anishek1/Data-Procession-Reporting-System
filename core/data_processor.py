@@ -153,6 +153,13 @@ def load_file(filepath: str) -> Dict[str, Any]:
 
     # Cache the loaded data in memory for subsequent operations
     _loaded_data = data
+    
+    # Persist the data to a local cache file for stateless CLI workflows
+    try:
+        with open('.dprs_cache.json', 'w', encoding='utf-8') as f:
+            json.dump(data, f)
+    except Exception:
+        pass  # Fail gracefully if we cannot write to disk
 
     return {
         'status': 'success',
@@ -182,6 +189,17 @@ def compute_statistics(column_name: Optional[str] = None) -> Dict[str, Any]:
     Raises:
         ValueError: If no data has been loaded
     """
+    global _loaded_data
+    if _loaded_data is None:
+        # Try to retrieve from disk cache for CLI state persistence
+        cache_path = Path('.dprs_cache.json')
+        if cache_path.exists():
+            try:
+                with open(cache_path, 'r', encoding='utf-8') as f:
+                    _loaded_data = json.load(f)
+            except Exception:
+                pass
+
     if _loaded_data is None:
         raise ValueError("No data loaded. Call load_file() first.")
 

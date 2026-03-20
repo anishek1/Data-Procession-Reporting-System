@@ -7,6 +7,11 @@ Command-line interface for DPRS using argparse.
 
 import argparse
 import sys
+import os
+
+# Add the project root to the Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from core.data_processor import load_file, compute_statistics
 from reporting.report_generator import ReportGenerator
 from utils.logger import logger
@@ -35,7 +40,12 @@ def main():
     args = parser.parse_args()
     
     # Initialization
-    generator = ReportGenerator()
+    try:
+        generator = ReportGenerator()
+    except DPRSException as e:
+        logger.error(f"Operation failed: {e}") 
+        print(f"System Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
     try:
         if args.command == 'load':
@@ -60,7 +70,7 @@ def main():
         else:
             parser.print_help() 
 
-    except DPRSException as e:
+    except (DPRSException, ValueError) as e:
         # Custom Error Handling [cite: 10, 156]
         logger.error(f"Operation failed: {e}") 
         print(f"System Error: {e}", file=sys.stderr)

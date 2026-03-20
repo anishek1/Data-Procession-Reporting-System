@@ -108,3 +108,27 @@
 [2026-03-17 00:32:52] [INFO] [utils.logger] - Loading file: data.csv
 [2026-03-17 00:33:18] [INFO] [utils.logger] - Loading file: data.csv
 [2026-03-17 00:33:18] [INFO] [utils.logger] - Loading file: invalid.csv
+[2026-03-18 23:35:16] [INFO] [utils.logger] - Loading file: data.csv
+[2026-03-18 23:35:16] [INFO] [utils.logger] - Loading file: invalid.csv
+[2026-03-18 23:37:13] [INFO] [utils.logger] - Loading file: data.csv
+[2026-03-18 23:37:13] [INFO] [utils.logger] - Loading file: invalid.csv
+[2026-03-18 23:37:13] [INFO] [utils.logger] - Created output directory: C:\Users\harsh\AppData\Local\Temp\pytest-of-harsh\pytest-12\test_report_generator_init0\test_output
+[2026-03-18 23:37:13] [INFO] [utils.logger] - Created output directory: C:\Users\harsh\AppData\Local\Temp\pytest-of-harsh\pytest-12\test_generate_text_report0\test_output
+[2026-03-18 23:37:13] [INFO] [utils.logger] - Text report successfully generated at C:\Users\harsh\AppData\Local\Temp\pytest-of-harsh\pytest-12\test_generate_text_report0\test_output\test_report.txt
+[2026-03-18 23:37:13] [INFO] [utils.logger] - Created output directory: C:\Users\harsh\AppData\Local\Temp\pytest-of-harsh\pytest-12\test_generate_json_report0\test_output
+[2026-03-18 23:37:13] [INFO] [utils.logger] - JSON export successfully generated at C:\Users\harsh\AppData\Local\Temp\pytest-of-harsh\pytest-12\test_generate_json_report0\test_output\test_export.json
+[2026-03-18 23:37:13] [ERROR] [utils.logger] - Failed to create output directory: [WinError 3] The system cannot find the path specified: 'Z:\\'
+[2026-03-19 01:35:29] [INFO] [utils.logger] - Loading file: D:\Data processing\Data-Procession-Reporting-System\input\weight-height.csv
+[2026-03-19 01:36:07] [ERROR] [utils.logger] - Operation failed: No data loaded. Call load_file() first.
+[2026-03-19 01:38:37] [INFO] [utils.logger] - Loading file: D:\Data processing\Data-Procession-Reporting-System\input\weight-height.csv
+[2026-03-19 01:38:49] [INFO] [utils.logger] - Displayed summary to console.
+[2026-03-19 01:40:01] [INFO] [utils.logger] - Loading file: D:\Data processing\Data-Procession-Reporting-System\input\weight-height.csv
+[2026-03-19 01:40:05] [INFO] [utils.logger] - Displayed summary to console.
+[2026-03-19 01:41:34] [INFO] [utils.logger] - Text report successfully generated at output\report.txt
+[2026-03-19 01:43:41] [INFO] [utils.logger] - JSON export successfully generated at output\export.json
+[2026-03-19 11:48:08] [INFO] [utils.logger] - Loading file: D:\Data processing\Data-Procession-Reporting-System\input\weight-height.csv
+[2026-03-19 11:48:44] [INFO] [utils.logger] - Displayed summary to console.
+[2026-03-19 11:49:49] [INFO] [utils.logger] - Text report successfully generated at output\report.txt
+[2026-03-19 11:50:27] [INFO] [utils.logger] - JSON export successfully generated at output\export.json
+[2026-03-21 01:27:04] [INFO] [utils.logger] - Loading file: D:\Data processing\Data-Procession-Reporting-System\input\weight-height.csv
+[2026-03-21 01:27:39] [INFO] [utils.logger] - Displayed summary to console.
