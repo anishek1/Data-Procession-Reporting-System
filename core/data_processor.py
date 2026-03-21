@@ -244,6 +244,7 @@ def _compute_column_stats(
 ) -> Dict[str, Any]:
     """Compute statistics for a single numeric column."""
     import statistics
+    
 
     result = {
         'column': col_name,
@@ -266,3 +267,6 @@ def clear_data() -> None:
     """Clear loaded data from memory."""
     global _loaded_data
     _loaded_data = None
+    cache_path = Path('.dprs_cache.json')
+    if cache_path.exists():
+        cache_path.unlink()
