@@ -132,3 +132,4 @@
 [2026-03-19 11:50:27] [INFO] [utils.logger] - JSON export successfully generated at output\export.json
 [2026-03-21 01:27:04] [INFO] [utils.logger] - Loading file: D:\Data processing\Data-Procession-Reporting-System\input\weight-height.csv
 [2026-03-21 01:27:39] [INFO] [utils.logger] - Displayed summary to console.
+[2026-03-23 15:44:32] [INFO] [utils.logger] - Loading file: D:\Data processing\Data-Procession-Reporting-System\input\weight-height.csv
