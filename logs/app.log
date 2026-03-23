@@ -132,3 +132,38 @@
 [2026-03-19 11:50:27] [INFO] [utils.logger] - JSON export successfully generated at output\export.json
 [2026-03-21 01:27:04] [INFO] [utils.logger] - Loading file: D:\Data processing\Data-Procession-Reporting-System\input\weight-height.csv
 [2026-03-21 01:27:39] [INFO] [utils.logger] - Displayed summary to console.
+[2026-03-23 16:05:04] [INFO] [utils.logger] - Loading file: data.csv
+[2026-03-23 16:05:04] [INFO] [utils.logger] - Loading file: invalid.csv
+[2026-03-23 16:05:04] [INFO] [utils.logger] - Created output directory: C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-37\test_report_generator_init0\test_output
+[2026-03-23 16:05:04] [INFO] [utils.logger] - Created output directory: C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-37\test_generate_text_report0\test_output
+[2026-03-23 16:05:04] [INFO] [utils.logger] - Text report successfully generated at C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-37\test_generate_text_report0\test_output\test_report.txt
+[2026-03-23 16:05:04] [INFO] [utils.logger] - Created output directory: C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-37\test_generate_json_report0\test_output
+[2026-03-23 16:05:04] [INFO] [utils.logger] - JSON export successfully generated at C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-37\test_generate_json_report0\test_output\test_export.json
+[2026-03-23 16:05:04] [ERROR] [utils.logger] - Failed to create output directory: [WinError 3] The system cannot find the path specified: 'Z:\\'
+[2026-03-23 16:07:48] [INFO] [utils.logger] - Created output directory: output
+[2026-03-23 16:07:48] [INFO] [utils.logger] - Loading file: C:\Users\anish\Desktop\Data Procession & Reporting System\Data-Procession-Reporting-System\input\weight-height.csv
+[2026-03-23 16:08:18] [INFO] [utils.logger] - Displayed summary to console.
+[2026-03-23 16:08:45] [INFO] [utils.logger] - Loading file: data.csv
+[2026-03-23 16:08:45] [INFO] [utils.logger] - Loading file: invalid.csv
+[2026-03-23 16:08:45] [INFO] [utils.logger] - Created output directory: C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-38\test_report_generator_init0\test_output
+[2026-03-23 16:08:45] [INFO] [utils.logger] - Created output directory: C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-38\test_generate_text_report0\test_output
+[2026-03-23 16:08:45] [INFO] [utils.logger] - Text report successfully generated at C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-38\test_generate_text_report0\test_output\test_report.txt
+[2026-03-23 16:08:45] [INFO] [utils.logger] - Created output directory: C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-38\test_generate_json_report0\test_output
+[2026-03-23 16:08:45] [INFO] [utils.logger] - JSON export successfully generated at C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-38\test_generate_json_report0\test_output\test_export.json
+[2026-03-23 16:08:45] [ERROR] [utils.logger] - Failed to create output directory: [WinError 3] The system cannot find the path specified: 'Z:\\'
+[2026-03-23 16:09:04] [INFO] [utils.logger] - Loading file: data.csv
+[2026-03-23 16:09:04] [INFO] [utils.logger] - Loading file: invalid.csv
+[2026-03-23 16:09:04] [INFO] [utils.logger] - Created output directory: C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-39\test_report_generator_init0\test_output
+[2026-03-23 16:09:04] [INFO] [utils.logger] - Created output directory: C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-39\test_generate_text_report0\test_output
+[2026-03-23 16:09:04] [INFO] [utils.logger] - Text report successfully generated at C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-39\test_generate_text_report0\test_output\test_report.txt
+[2026-03-23 16:09:04] [INFO] [utils.logger] - Created output directory: C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-39\test_generate_json_report0\test_output
+[2026-03-23 16:09:04] [INFO] [utils.logger] - JSON export successfully generated at C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-39\test_generate_json_report0\test_output\test_export.json
+[2026-03-23 16:09:04] [ERROR] [utils.logger] - Failed to create output directory: [WinError 3] The system cannot find the path specified: 'Z:\\'
+[2026-03-23 16:09:15] [INFO] [utils.logger] - Loading file: data.csv
+[2026-03-23 16:09:15] [INFO] [utils.logger] - Loading file: invalid.csv
+[2026-03-23 16:09:15] [INFO] [utils.logger] - Created output directory: C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-40\test_report_generator_init0\test_output
+[2026-03-23 16:09:15] [INFO] [utils.logger] - Created output directory: C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-40\test_generate_text_report0\test_output
+[2026-03-23 16:09:15] [INFO] [utils.logger] - Text report successfully generated at C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-40\test_generate_text_report0\test_output\test_report.txt
+[2026-03-23 16:09:15] [INFO] [utils.logger] - Created output directory: C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-40\test_generate_json_report0\test_output
+[2026-03-23 16:09:15] [INFO] [utils.logger] - JSON export successfully generated at C:\Users\anish\AppData\Local\Temp\pytest-of-anish\pytest-40\test_generate_json_report0\test_output\test_export.json
+[2026-03-23 16:09:15] [ERROR] [utils.logger] - Failed to create output directory: [WinError 3] The system cannot find the path specified: 'Z:\\'
