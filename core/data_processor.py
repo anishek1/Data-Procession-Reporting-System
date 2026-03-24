@@ -13,7 +13,7 @@ import csv
 import json
 import statistics
 from pathlib import Path
-from typing import Dict, List, Any, Optional, TypedDict
+from typing import Dict, List, Any, Optional, Tuple, TypedDict
 from .exceptions import FileNotFoundError as DPRSFileNotFoundError
 from .exceptions import InvalidFileTypeError
 from utils.logger import logger
@@ -191,6 +191,42 @@ class DataProcessor:
         )
         return result
 
+    def _compute_stats_from_data(
+        self, data: LoadedData, column_name: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Compute statistics from a provided LoadedData object (no self._data access).
+
+        Extracted so that process_file() can compute stats without touching shared
+        singleton state, making concurrent API requests safe.
+        """
+        rows = data['rows']
+        headers = data['headers']
+
+        if len(rows) == 0:
+            return {'error': 'No data rows to process'}
+
+        stats: Dict[str, Any] = {}
+        columns_to_process = [column_name] if column_name else headers
+
+        for col in columns_to_process:
+            if col not in headers:
+                stats[col] = {'error': f"Column '{col}' not found"}
+                continue
+
+            numeric_values: List[float] = []
+            for row in rows:
+                val = row.get(col)
+                if val is not None and val != '':
+                    try:
+                        numeric_values.append(float(val))
+                    except (ValueError, TypeError):
+                        pass
+
+            if numeric_values:
+                stats[col] = self._compute_column_stats(numeric_values, col)
+
+        return stats
+
     # ------------------------------------------------------------------
     # Public interface
     # ------------------------------------------------------------------
@@ -265,39 +301,15 @@ class DataProcessor:
                 try:
                     with open(cache_path, 'r', encoding='utf-8') as f:
                         self._data = json.load(f)
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug(
+                        f"Could not read cache file {cache_path}: {e}", exc_info=True
+                    )
 
         if self._data is None:
             raise ValueError("No data loaded. Call load_file() first.")
 
-        rows = self._data['rows']
-        headers = self._data['headers']
-
-        if len(rows) == 0:
-            return {'error': 'No data rows to process'}
-
-        stats: Dict[str, Any] = {}
-        columns_to_process = [column_name] if column_name else headers
-
-        for col in columns_to_process:
-            if col not in headers:
-                stats[col] = {'error': f"Column '{col}' not found"}
-                continue
-
-            numeric_values: List[float] = []
-            for row in rows:
-                val = row.get(col)
-                if val is not None and val != '':
-                    try:
-                        numeric_values.append(float(val))
-                    except (ValueError, TypeError):
-                        pass
-
-            if numeric_values:
-                stats[col] = self._compute_column_stats(numeric_values, col)
-
-        return stats
+        return self._compute_stats_from_data(self._data, column_name)
 
     def load_csv(self, filepath: str) -> LoadedData:
         """
@@ -342,6 +354,48 @@ class DataProcessor:
         cache_path = Path('.dprs_cache.json')
         if cache_path.exists():
             cache_path.unlink()
+
+    def process_file(
+        self, filepath: str
+    ) -> Tuple[LoadFileResult, Dict[str, Any]]:
+        """Load a file and compute statistics atomically without touching self._data.
+
+        Designed for the API upload flow where concurrent requests must not
+        interleave through the shared singleton state. The result is derived
+        entirely from a local variable; self._data is never read or written.
+
+        Args:
+            filepath: Path to a CSV or JSON file.
+
+        Returns:
+            A (LoadFileResult, stats_dict) tuple.
+
+        Raises:
+            DPRSFileNotFoundError: If file doesn't exist.
+            InvalidFileTypeError: If format not supported.
+        """
+        path = Path(filepath)
+
+        if path.suffix.lower() == '.csv':
+            data = self._load_csv(str(path))
+        elif path.suffix.lower() == '.json':
+            data = self._load_json(str(path))
+        else:
+            raise InvalidFileTypeError(
+                f"Unsupported file format: {path.suffix}. Use .csv or .json"
+            )
+
+        stats = self._compute_stats_from_data(data)
+
+        file_meta = LoadFileResult(
+            status='success',
+            file=str(path),
+            rows=data['row_count'],
+            columns=data['column_count'],
+            headers=data['headers'],
+        )
+
+        return file_meta, stats
 
 
 # ---------------------------------------------------------------------------
@@ -394,3 +448,14 @@ def clear_data() -> None:
     """Clear loaded data from memory and remove the disk cache.
     Delegates to DataProcessor singleton."""
     _get_processor().clear()
+
+
+def process_file(
+    filepath: str,
+) -> Tuple[LoadFileResult, Dict[str, Any]]:
+    """Load a file and compute statistics atomically without touching shared state.
+
+    Designed for the API upload flow. Does not modify the singleton's _data.
+    Delegates to DataProcessor.process_file().
+    """
+    return _get_processor().process_file(filepath)

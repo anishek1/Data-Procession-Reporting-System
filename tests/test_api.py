@@ -190,3 +190,43 @@ def test_health_check(client):
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
+
+
+# ── Security / error-path regression tests ───────────────────────────────────
+
+def test_upload_traversal_filename(client):
+    """Uploading a file with a path traversal filename is rejected with HTTP 400."""
+    response = client.post(
+        "/upload",
+        files={"file": ("../secret.csv", io.BytesIO(b"a,b\n1,2\n"), "text/csv")},
+    )
+    assert response.status_code == 400
+    assert "job_id" not in response.json()
+
+
+def test_upload_malformed_json(client):
+    """Uploading a JSON file with invalid syntax returns HTTP 422."""
+    response = client.post(
+        "/upload",
+        files={"file": ("data.json", io.BytesIO(b"[not valid json"), "application/json")},
+    )
+    assert response.status_code == 422
+    assert "job_id" not in response.json()
+
+
+def test_upload_malformed_csv(client):
+    """Uploading a CSV with inconsistent column counts returns 200 (DictReader is tolerant)."""
+    response = client.post(
+        "/upload",
+        files={
+            "file": (
+                "data.csv",
+                io.BytesIO(b"a,b,c\n1,2\n3,4,5,6\n"),
+                "text/csv",
+            )
+        },
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["rows"] == 2
+    assert body["status"] == "completed"

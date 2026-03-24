@@ -21,7 +21,7 @@ A Python data processing system with both a CLI and a REST API. Loads CSV/JSON f
 
 **FastAPI Feature: ✅ COMPLETE** — REST API with file upload, job tracking, SQLite persistence (`feature/fast-api-anishekh`)
 
-**Security & Quality Hardening: ✅ COMPLETE** — path traversal fix, exception chaining, CRUD field validation, requirements pinned with version bounds
+**Security & Quality Hardening: ✅ COMPLETE** — traversal filenames explicitly rejected (HTTP 400), job-scoped file storage, atomic `process_file()` for concurrent-safe API uploads, atomic CRUD validation with forbidden-field set, cache-read failures logged, requirements pinned
 
 **Sprint 3: ⏳ UPCOMING** — Docker, GitHub Actions CI/CD
 
@@ -58,7 +58,7 @@ pytest tests/ -v
 # Run with coverage report
 pytest --cov=core --cov=utils --cov=api tests/ -v
 
-# Expected: 53/53 tests passing
+# Expected: 56/56 tests passing
 ```
 
 ### Use the CLI
@@ -234,7 +234,7 @@ flake8 dprs/
 # Run tests with coverage
 pytest --cov=core --cov=utils tests/ -v
 
-# Expected output: 53/53 tests passing, ≥85% coverage (target: 100%)
+# Expected output: 56/56 tests passing, ≥85% coverage (target: 100%)
 ```
 
 ## Configuration
@@ -263,8 +263,8 @@ All modules are thoroughly tested:
 | logger.py | 5 |
 | cli/main.py | 5 |
 | report_generator.py | 4 |
-| API (upload, jobs, health) | 9 |
-| **TOTAL** | **53** |
+| API (upload, jobs, health) | 12 |
+| **TOTAL** | **56** |
 
 Run all tests:
 ```bash
@@ -346,7 +346,7 @@ Each sprint:
 
 ## Next Steps
 
-- **Anishekh:** Create PR `feature/fast-api-anishekh` → main (security & quality hardening applied)
+- **Anishekh:** PR `#8` opened (`feature/fast-api-anishekh` → main) — awaiting team review
 - **Intern 3:** Start Sprint 3 (Docker, CI/CD)
 - **Team:** Review and merge FastAPI branch, daily standups
 

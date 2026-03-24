@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from api import crud
 from api.database import get_db
 from api.models import UploadResponse
-from core.data_processor import clear_data, compute_statistics, load_file
+from core.data_processor import process_file
 from utils.config import get_config
 from utils.logger import logger
 
@@ -38,7 +38,7 @@ async def upload_file(
     - Runs statistical analysis immediately
     - Returns a job_id plus the computed statistics
     """
-    # Validate file extension before doing any disk I/O
+    # Validate file extension and filename before doing any disk I/O or DB writes
     filename = file.filename
     if not filename:
         raise HTTPException(status_code=400, detail="Missing filename in upload.")
@@ -49,16 +49,21 @@ async def upload_file(
             detail=f"Unsupported file type '{suffix}'. Only .csv and .json are accepted.",
         )
 
+    # Reject filenames containing path traversal sequences or directory separators
+    safe_filename = Path(filename).name
+    if safe_filename != filename or ".." in filename or "/" in filename or "\\" in filename:
+        logger.warning(f"Rejected upload with invalid filename: '{filename}'")
+        raise HTTPException(status_code=400, detail="Invalid filename.")
+
     job_id = str(uuid.uuid4())
     crud.create_job(db, job_id, filename)
     logger.info(f"Job {job_id}: upload started for '{filename}'")
 
-    # Determine destination path from config
+    # Determine destination path from config — prefix with job_id to avoid collisions
     config = get_config()
     input_dir = config.get("input_dir", "input")
     os.makedirs(input_dir, exist_ok=True)
-    safe_filename = Path(filename).name
-    dest_path = os.path.join(input_dir, safe_filename)
+    dest_path = os.path.join(input_dir, f"{job_id}_{safe_filename}")
 
     # Save uploaded file to disk
     try:
@@ -69,11 +74,9 @@ async def upload_file(
         logger.error(f"Job {job_id}: failed to save file — {exc}")
         raise HTTPException(status_code=422, detail=f"Could not save file: {exc}") from exc
 
-    # Process the file using existing core module
+    # Process the file atomically (no shared singleton state touched)
     try:
-        clear_data()
-        file_meta = load_file(dest_path)
-        statistics = compute_statistics()
+        file_meta, statistics = process_file(dest_path)
     except Exception as exc:
         crud.update_job(db, job_id, status="failed", error=str(exc))
         logger.error(f"Job {job_id}: processing failed — {exc}")
