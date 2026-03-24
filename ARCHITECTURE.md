@@ -3,7 +3,7 @@
 ## Module Responsibilities
 
 ### core/
-- `data_processor.py` — Load CSV/JSON files, store data in memory, compute statistics
+- `data_processor.py` — Load CSV/JSON files, compute statistics. State is encapsulated in the `DataProcessor` Singleton class; module-level functions (`load_file`, `compute_statistics`, etc.) are thin wrappers around the singleton. Return types are explicitly defined via `TypedDict` (`LoadedData`, `LoadFileResult`, `ColumnStats`).
 - `validator.py` — Validate schema, check required fields, verify data types
 - `exceptions.py` — Custom exception hierarchy for all error handling
 
@@ -39,6 +39,9 @@
 
 ## Key Decisions
 
+- **Singleton for state** — `DataProcessor` uses `__new__` Singleton pattern (same as `utils/config.py`'s `get_config()`). Eliminates module-level global variables while keeping the public API identical.
+- **Explicit TypedDicts** — `LoadedData`, `LoadFileResult`, `ColumnStats` replace bare `Dict[str, Any]` for type-safe return values.
+- **Full in-memory load** — `rows = list(reader)` materializes all rows; lazy/chunked loading is a future backlog item since `compute_statistics()` requires a full multi-column pass.
 - No external data storage (in-memory only for now)
 - All errors are custom exceptions derived from `DPRSException`
 - All operations logged to file + console

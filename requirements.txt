@@ -1,5 +1,6 @@
-# Dependencies added in future sprints
-# Using Python standard library only for core functionality
-# Optional testing dependencies:
-# pytest
-# pytest-cov
+fastapi
+uvicorn[standard]
+python-multipart
+sqlalchemy
+pytest
+pytest-cov

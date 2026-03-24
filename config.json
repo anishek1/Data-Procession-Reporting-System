@@ -7,5 +7,6 @@
     "output_dir": "output",
     "schema_validation": true,
     "sample_csv_path": "input/sample_data.csv",
-    "sample_json_path": "input/sample_data.json"
+    "sample_json_path": "input/sample_data.json",
+    "database_url": "sqlite:///./dprs.db"
 }
