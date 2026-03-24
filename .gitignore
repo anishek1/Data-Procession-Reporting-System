@@ -35,3 +35,9 @@ DPRS_Sprint_Plan.md
 
 output/
 logs/
+.dprs_cache.json
+dprs.db
+
+# Claude Code
+CLAUDE.md
+.claude/

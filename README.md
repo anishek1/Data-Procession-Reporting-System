@@ -1,29 +1,29 @@
 # DPRS — Data Processing & Reporting System
 
-A Python CLI application for processing structured data (CSV/JSON), validating quality, computing statistics, and generating reports. Built with clean architecture and comprehensive testing.
+A Python data processing system with both a CLI and a REST API. Loads CSV/JSON files, validates data quality, computes statistics, generates reports, and exposes all functionality over HTTP with persistent job tracking.
 
 ## What This Project Does
 
-- Load CSV or JSON data files
+- Load CSV or JSON data files (CLI and REST API)
 - Validate data against defined schemas
 - Clean messy data (handle missing values, type mismatches)
 - Compute statistical analysis (mean, median, min, max, sum, std dev)
 - Generate text and JSON reports
+- Expose file upload and job status via a FastAPI REST service
+- Persist job results across restarts using SQLite
 - Log all operations for auditing and debugging
 
 ## Project Status
 
-**Sprint 1: ✅ COMPLETE**
-- Core data processing module fully implemented
-- 35 unit tests, 100% code coverage
-- Production-ready code on `data-processing-engineer` branch
-- Ready for integration with CLI (Sprint 2)
+**Sprint 1: ✅ COMPLETE** — Core data processing engine, 100% test coverage
 
-**Sprint 2: 🔄 IN PROGRESS**
-- Intern 2 building CLI interface and report generation
+**Sprint 2: ✅ COMPLETE** — CLI interface (`load`, `summary`, `report`, `export`) and report generation
 
-**Sprint 3: ⏳ UPCOMING**
-- Intern 3 handling Docker and GitHub Actions
+**FastAPI Feature: ✅ COMPLETE** — REST API with file upload, job tracking, SQLite persistence (`feature/fast-api-anishekh`)
+
+**Security & Quality Hardening: ✅ COMPLETE** — traversal filenames explicitly rejected (HTTP 400), job-scoped file storage, atomic `process_file()` for concurrent-safe API uploads, atomic CRUD validation with forbidden-field set, cache-read failures logged, requirements pinned
+
+**Sprint 3: ⏳ UPCOMING** — Docker, GitHub Actions CI/CD
 
 See `PROJECT_STATE.md` for detailed progress.
 
@@ -56,56 +56,71 @@ pip install -r requirements.txt
 pytest tests/ -v
 
 # Run with coverage report
-pytest --cov=core --cov=utils tests/ -v
+pytest --cov=core --cov=utils --cov=api tests/ -v
 
-# Expected: 35/35 tests passing, 100% coverage
+# Expected: 56/56 tests passing
 ```
 
-### Use the Core Module
+### Use the CLI
 
-The core data processing engine is fully functional:
+```bash
+python cli/main.py load --file input/weight-height.csv
+python cli/main.py summary
+python cli/main.py report --type text
+python cli/main.py export --format json
+```
 
-```python
-from dprs.core.data_processor import load_file, compute_statistics
-from dprs.core.validator import Schema, validate_schema
+### Use the REST API
 
-# Load data
-result = load_file("input/sales.csv")
-print(f"Loaded {result['rows']} rows, {result['columns']} columns")
+```bash
+uvicorn api.main:app --reload
+# Interactive docs: http://127.0.0.1:8000/docs
+```
 
-# Compute statistics
-stats = compute_statistics()
-print(stats)
+```bash
+# Upload a file
+curl -X POST http://127.0.0.1:8000/upload -F "file=@input/weight-height.csv"
+# Returns: { "job_id": "...", "status": "completed", "statistics": { ... } }
+
+# Retrieve results by job ID
+curl http://127.0.0.1:8000/jobs/<job_id>
 ```
 
 ## Project Structure
 
-```
+```text
 dprs/
-├── core/                    # Data processing engine (COMPLETE ✅)
-│   ├── data_processor.py    # Load files, compute statistics
+├── core/                    # Data processing engine ✅
+│   ├── data_processor.py    # DataProcessor Singleton — load files, compute statistics
 │   ├── validator.py         # Schema validation, data cleaning
-│   └── exceptions.py        # Custom exception classes
+│   └── exceptions.py        # Custom exception hierarchy
 │
-├── utils/                   # Utilities (COMPLETE ✅)
-│   ├── logger.py            # Logging setup with rotation
-│   └── config.py            # Configuration management
+├── utils/                   # Utilities ✅
+│   ├── logger.py            # Logging with file rotation
+│   └── config.py            # config.json management
 │
-├── reporting/               # Report generation (IN PROGRESS)
+├── api/                     # REST API ✅
+│   ├── main.py              # FastAPI app, startup
+│   ├── models.py            # Pydantic response models
+│   ├── database.py          # SQLAlchemy engine & session
+│   ├── db_models.py         # Job ORM model (jobs table)
+│   ├── crud.py              # create_job, update_job, get_job
+│   └── routes/
+│       ├── upload.py        # POST /upload
+│       └── jobs.py          # GET /jobs/{job_id}
+│
+├── reporting/               # Report generation ✅
 │   └── report_generator.py
 │
-├── cli/                     # CLI interface (IN PROGRESS)
+├── cli/                     # CLI interface ✅
 │   └── main.py
 │
-├── tests/                   # Unit tests (COMPLETE ✅)
-│   ├── test_processor.py
-│   ├── test_validator.py
-│   ├── test_config.py
-│   └── test_logger.py
+├── tests/                   # Tests ✅ (53 passing)
 │
-├── input/                   # Sample data files
+├── input/                   # Data files
 ├── output/                  # Generated reports
 ├── logs/                    # Application logs
+├── dprs.db                  # SQLite database (auto-created)
 ├── config.json              # Configuration
 └── requirements.txt         # Dependencies
 ```
@@ -206,7 +221,7 @@ All code follows these standards:
 - **Style:** PEP 8 (Python style guide)
 - **Documentation:** 100% docstring coverage
 - **Comments:** Complex logic has inline comments
-- **Testing:** ≥85% code coverage (our target: 100%)
+- **Testing:** minimum 85% code coverage; aspirational target 100%
 - **Logging:** All operations logged, no print statements
 - **Configuration:** All settings in config.json, no hardcoding
 
@@ -219,7 +234,7 @@ flake8 dprs/
 # Run tests with coverage
 pytest --cov=core --cov=utils tests/ -v
 
-# Expected output: 35/35 tests passing, 100% coverage
+# Expected output: 56/56 tests passing, ≥85% coverage (target: 100%)
 ```
 
 ## Configuration
@@ -228,10 +243,11 @@ Edit `config.json` to customize:
 
 ```json
 {
-  "log_level": "INFO",        # Logging level
+  "log_level": "INFO",
   "log_file": "logs/app.log",
-  "input_dir": "input",       # Where to load data from
-  "output_dir": "output"      # Where to save reports
+  "input_dir": "input",
+  "output_dir": "output",
+  "database_url": "sqlite:///./dprs.db"
 }
 ```
 
@@ -239,14 +255,16 @@ Edit `config.json` to customize:
 
 All modules are thoroughly tested:
 
-| Module | Tests | Coverage |
-|--------|-------|----------|
-| data_processor.py | 6 | 100% |
-| validator.py | 5 | 100% |
-| config.py | 4 | 100% |
-| logger.py | 4 | 100% |
-| Other | 16+ | 100% |
-| **TOTAL** | **35+** | **100%** |
+| Module | Tests |
+|--------|-------|
+| data_processor.py | 10 |
+| validator.py | 11 |
+| config.py | 6 |
+| logger.py | 5 |
+| cli/main.py | 5 |
+| report_generator.py | 4 |
+| API (upload, jobs, health) | 12 |
+| **TOTAL** | **56** |
 
 Run all tests:
 ```bash
@@ -287,10 +305,11 @@ pytest tests/ -v
 - Can refactor to numpy/pandas if performance needed
 - Makes code easier to understand and maintain
 
-**Why In-Memory Storage?**
-- Simpler for initial development
-- Works well for typical use cases
-- Can migrate to database later if needed
+**Why In-Memory for Processing, SQLite for Jobs?**
+- CSV/JSON data loaded in memory for fast processing (≤100k rows); state is managed by the `DataProcessor` Singleton class, not a bare global variable
+- Job metadata (id, status, statistics, timestamps) persisted to SQLite via SQLAlchemy
+- SQLite needs no external server — single `dprs.db` file, zero config
+- `database_url` in `config.json` allows swapping to PostgreSQL/MySQL later
 
 **Why Custom Exceptions?**
 - Consistent error handling across modules
@@ -327,9 +346,9 @@ Each sprint:
 
 ## Next Steps
 
-- **Intern 2:** Start Sprint 2 (CLI interface)
-- **Intern 3:** Start Sprint 3 (Docker & DevOps)
-- **Team:** Daily standups, code reviews before merge
+- **Anishekh:** PR `#8` opened (`feature/fast-api-anishekh` → main) — awaiting team review
+- **Intern 3:** Start Sprint 3 (Docker, CI/CD)
+- **Team:** Review and merge FastAPI branch, daily standups
 
 See `PROJECT_STATE.md` for detailed sprint progress.
 

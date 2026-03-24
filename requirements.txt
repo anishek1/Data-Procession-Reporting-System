@@ -1,5 +1,9 @@
-# Dependencies added in future sprints
-# Using Python standard library only for core functionality
-# Optional testing dependencies:
-# pytest
-# pytest-cov
+
+fastapi>=0.110.0,<1.0.0
+uvicorn[standard]>=0.29.0,<1.0.0
+python-multipart>=0.0.9,<1.0.0
+sqlalchemy>=2.0.0,<3.0.0
+pytest>=8.0.0,<10.0.0
+pytest-cov>=5.0.0,<8.0.0
+#range ko conservative rakha hai so minor update same version me ho jaye
+#==x.y.z se exact same version install hoga
