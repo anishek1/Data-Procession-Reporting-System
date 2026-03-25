@@ -36,20 +36,10 @@ DPRS_Sprint_Plan.md
 # Logs and output
 logs/
 output/
-*.log
-
-# Secrets and credentials
-.env*
-!.env.example
-!env.example
-*.pem
-*.key
-credentials.json
-secrets.json
-client_secret.json
-*.p12
-*.pfx
+logs/
 .dprs_cache.json
-*.sqlite
-*.db
-.aws/
+dprs.db
+
+# Claude Code
+CLAUDE.md
+.claude/
