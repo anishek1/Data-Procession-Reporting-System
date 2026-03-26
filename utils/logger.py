@@ -8,6 +8,35 @@ Logs to both file (with rotation) and console with timestamps.
 import logging
 import logging.handlers
 from pathlib import Path
+import re
+
+class SensitiveDataFilter(logging.Filter):
+    """Filter to redact sensitive data from logs."""
+    
+    def __init__(self, name=""):
+        super().__init__(name)
+        self.patterns = [
+            # Email
+            (re.compile(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'), '[REDACTED_EMAIL]'),
+            # Credit card
+            (re.compile(r'\b(?:\d[ -]*?){13,16}\b'), '[REDACTED_CC]'),
+            # Password
+            (re.compile(r'(?i)(password\s*[=:]\s*)\S+'), r'\1[REDACTED]'),
+            # API key
+            (re.compile(r'(?i)(api_key\s*[=:]\s*)\S+'), r'\1[REDACTED]'),
+            # Token
+            (re.compile(r'(?i)(token\s*[=:]\s*)\S+'), r'\1[REDACTED]'),
+            # Secret
+            (re.compile(r'(?i)(secret\s*[=:]\s*)\S+'), r'\1[REDACTED]'),
+]
+
+    def filter(self, record):
+        if isinstance(record.msg, str):
+            msg = record.msg
+            for pattern, replacement in self.patterns:
+                msg = pattern.sub(replacement, msg)
+            record.msg = msg
+        return True
 
 
 def setup_logger(
@@ -56,17 +85,18 @@ def setup_logger(
     )
     file_handler.setFormatter(formatter)
 
-    # Console handler
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
+
+    sanitizer = SensitiveDataFilter()
+    file_handler.addFilter(sanitizer)
+    console_handler.addFilter(sanitizer)
 
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
 
     return logger
 
-
-# Module-level default logger
 # Module-level default logger — reads settings from config.json if available
 def get_logger(name: str = "dprs") -> logging.Logger:
     """Get a logger configured from config.json."""

@@ -5,7 +5,6 @@ sqlalchemy>=2.0.0,<3.0.0
 pytest>=8.0.0,<10.0.0
 pytest-cov>=5.0.0,<8.0.0
 httpx>=0.23.0
-
 #range ko conservative rakha hai so minor update same version me ho jaye
 #==x.y.z se exact same version install hoga
 # Dependencies added in future sprints

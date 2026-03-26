@@ -31,7 +31,8 @@ RUN useradd -m -d /home/dprsuser -s /bin/bash dprsuser && \
 # Switch to non-root user
 USER dprsuser
 
-ENTRYPOINT ["python", "-m", "cli.main"]
+# Expose the API port
+EXPOSE 8000
 
-# Default arguments for the entrypoint (can be overridden by docker run)
-CMD ["--help"]
+# Start the FastAPI application via Uvicorn
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]

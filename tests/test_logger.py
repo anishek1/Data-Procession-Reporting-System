@@ -61,3 +61,18 @@ def test_get_logger_uses_config():
     logger = get_logger("dprs")
     assert logger is not None
     assert isinstance(logger, logging.Logger)
+
+def test_logger_sanitization(tmp_path):
+    """Test logger redacts sensitive data."""
+    log_file = tmp_path / "sanitized.log"
+    logger = setup_logger("sanitizer_test", log_file=str(log_file))
+
+    logger.info("User email is test@example.com and card is 1234-5678-9012-3456")
+
+    content = log_file.read_text()
+    assert "[REDACTED_EMAIL]" in content
+    assert "test@example.com" not in content
+    assert "[REDACTED_CC]" in content
+    assert "abc123xyz" not in content
+    assert "supersecret123" not in content
+    assert "1234-5678-9012-3456" not in content
