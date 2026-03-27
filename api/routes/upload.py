@@ -17,7 +17,9 @@ from api import crud
 from api.database import get_db
 from api.models import UploadResponse
 from core.data_processor import process_file
+from core.exceptions import InvalidFileTypeError
 from utils.config import get_config
+from utils.file_utils import validate_file_type, secure_resolve_path
 from utils.logger import logger
 
 router = APIRouter()
@@ -38,22 +40,17 @@ async def upload_file(
     - Runs statistical analysis immediately
     - Returns a job_id plus the computed statistics
     """
-    # Validate file extension and filename before doing any disk I/O or DB writes
+    # Validate file extension before doing any disk I/O or DB writes
     filename = file.filename
     if not filename:
         raise HTTPException(status_code=400, detail="Missing filename in upload.")
-    suffix = Path(filename).suffix.lower()
-    if suffix not in ALLOWED_EXTENSIONS:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unsupported file type '{suffix}'. Only .csv and .json are accepted.",
-        )
-
-    # Reject filenames containing path traversal sequences or directory separators
-    safe_filename = Path(filename).name
-    if safe_filename != filename or ".." in filename or "/" in filename or "\\" in filename:
-        logger.warning(f"Rejected upload with invalid filename: '{filename}'")
-        raise HTTPException(status_code=400, detail="Invalid filename.")
+        
+    try:
+        validate_file_type(filename, ALLOWED_EXTENSIONS)
+    except InvalidFileTypeError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
     job_id = str(uuid.uuid4())
     crud.create_job(db, job_id, filename)
@@ -63,7 +60,14 @@ async def upload_file(
     config = get_config()
     input_dir = config.get("input_dir", "input")
     os.makedirs(input_dir, exist_ok=True)
-    dest_path = os.path.join(input_dir, f"{job_id}_{safe_filename}")
+    
+    try:
+        # Resolving path safely using the secure file path resolver
+        dest_path = str(secure_resolve_path(input_dir, f"{job_id}_{filename}"))
+    except ValueError as exc:
+        crud.update_job(db, job_id, status="failed", error=str(exc))
+        logger.warning(f"Rejected upload with invalid filename: '{filename}', error: {exc}")
+        raise HTTPException(status_code=400, detail="Invalid filename.")
 
     # Save uploaded file to disk
     try:

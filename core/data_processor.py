@@ -17,6 +17,7 @@ from typing import Dict, List, Any, Optional, Tuple, TypedDict
 from .exceptions import FileNotFoundError as DPRSFileNotFoundError
 from .exceptions import InvalidFileTypeError
 from utils.logger import logger
+from utils.file_utils import validate_file_type
 
 
 # ---------------------------------------------------------------------------
@@ -246,6 +247,7 @@ class DataProcessor:
             DPRSFileNotFoundError: If file doesn't exist
             InvalidFileTypeError: If format not supported
         """
+        validate_file_type(filepath, {".csv", ".json"})
         path = Path(filepath)
 
         if path.suffix.lower() == '.csv':
@@ -374,6 +376,7 @@ class DataProcessor:
             DPRSFileNotFoundError: If file doesn't exist.
             InvalidFileTypeError: If format not supported.
         """
+        validate_file_type(filepath, {".csv", ".json"})
         path = Path(filepath)
 
         if path.suffix.lower() == '.csv':
