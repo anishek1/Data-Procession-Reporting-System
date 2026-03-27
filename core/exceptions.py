@@ -46,5 +46,9 @@ class InvalidArgumentError(DPRSException):
     pass
 
 class ReportGenerationError(DPRSException):
-    """Raised when report generation fails."""
+    """Raised when report cannot be created or saved."""
+    pass
+
+class MissingFieldError(DPRSException):
+    """Raised when a required field is absent in the data."""
     pass

@@ -2,7 +2,7 @@
 
 import pytest
 import json
-from utils.config import Config
+from utils.config import Config, load_config
 
 
 @pytest.fixture
@@ -59,3 +59,9 @@ def test_config_invalid_json(tmp_path):
 
     with pytest.raises(ValueError):
         Config(str(config_file))
+
+def test_load_config_function(sample_config_file):
+    """Test the load_config helper function."""
+    config = load_config(sample_config_file)
+    assert isinstance(config, Config)
+    assert config.get("log_level") == "INFO"

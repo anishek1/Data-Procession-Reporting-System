@@ -12,6 +12,12 @@ A Python data processing system with both a CLI and a REST API. Loads CSV/JSON f
 - Expose file upload and job status via a FastAPI REST service
 - Persist job results across restarts using SQLite
 - Log all operations for auditing and debugging
+- Containerized with Docker for consistent deployments
+- GitHub Actions CI pipeline with automated testing
+- Secure logging with sensitive data redaction
+- Non-root container user for security
+- Dependency vulnerability scanning
+- Configuration management via config.json
 
 ## Project Status
 
@@ -23,7 +29,7 @@ A Python data processing system with both a CLI and a REST API. Loads CSV/JSON f
 
 **Security & Quality Hardening: ✅ COMPLETE** — traversal filenames explicitly rejected (HTTP 400), job-scoped file storage, atomic `process_file()` for concurrent-safe API uploads, atomic CRUD validation with forbidden-field set, cache-read failures logged, requirements pinned
 
-**Sprint 3: ⏳ UPCOMING** — Docker, GitHub Actions CI/CD
+**Sprint 3: ✅ COMPLETE** — Docker, GitHub Actions CI/CD
 
 See `PROJECT_STATE.md` for detailed progress.
 
@@ -85,6 +91,41 @@ curl -X POST http://127.0.0.1:8000/upload -F "file=@input/weight-height.csv"
 # Retrieve results by job ID
 curl http://127.0.0.1:8000/jobs/<job_id>
 ```
+### Run via Docker
+
+#### Prerequisites
+- Docker Desktop installed and running
+
+#### Build the Image
+```bash
+docker build -t dprs-app .
+```
+
+#### Run the REST API
+```bash
+docker run -p 8000:8000 dprs-app
+```
+Then open **http://127.0.0.1:8000/docs** in your browser for the interactive API docs.
+
+#### Run the CLI via Docker
+```bash
+# Load a file
+docker run -v ${PWD}:/app dprs-app load --file input/weight-height.csv
+
+# Get summary
+docker run -v ${PWD}:/app dprs-app summary
+
+# Generate report
+docker run -v ${PWD}:/app dprs-app report --type text
+
+# Export JSON
+docker run -v ${PWD}:/app dprs-app export --format json
+```
+#### Upload a File via Docker API
+```bash
+curl -X POST http://127.0.0.1:8000/upload -F "file=@input/weight-height.csv"
+```
+
 
 ## Project Structure
 
@@ -122,6 +163,10 @@ dprs/
 ├── logs/                    # Application logs
 ├── dprs.db                  # SQLite database (auto-created)
 ├── config.json              # Configuration
+├── Dockerfile               # Container configuration
+├── .github/
+│   └── workflows/
+│       └── test.yml         # CI/CD pipeline
 └── requirements.txt         # Dependencies
 ```
 
@@ -136,7 +181,7 @@ We use **feature branches** to keep work organized and prevent conflicts.
 ```
 data-processing-engineer    ← Intern 1's branch (Sprint 1 - COMPLETE)
 feature/sprint-2-cli        ← Intern 2's branch (Sprint 2)
-feature/sprint-3-devops     ← Intern 3's branch (Sprint 3)
+feature/anirudh     ← Intern 3's branch (Sprint 3)
 ```
 
 #### Workflow for Each Sprint
@@ -243,11 +288,29 @@ Edit `config.json` to customize:
 
 ```json
 {
-  "log_level": "INFO",
-  "log_file": "logs/app.log",
-  "input_dir": "input",
-  "output_dir": "output",
-  "database_url": "sqlite:///./dprs.db"
+    "app": {
+        "name": "DPRS",
+        "version": "1.0.0",
+        "environment": "development"
+    },
+    "logging": {
+        "level": "INFO",
+        "file": "logs/app.log",
+        "max_bytes": 10485760,
+        "backup_count": 7
+    },
+    "data": {
+        "input_dir": "input",
+        "output_dir": "output",
+        "sample_csv": "input/sample_data.csv",
+        "sample_json": "input/sample_data.json",
+        "schema_validation": true
+    },
+    "reporting": {
+        "default_format": "text",
+        "save_to_file": true,
+        "report_dir": "output/reports"
+    }
 }
 ```
 
@@ -295,7 +358,7 @@ pytest tests/ -v
 |------|-----------|--------|--------|
 | Intern 1 | Data Processing | Sprint 1 ✅ | data-processing-engineer |
 | Intern 2 | CLI & Reporting | Sprint 2 | feature/sprint-2-cli |
-| Intern 3 | DevOps | Sprint 3 | feature/sprint-3-devops |
+| Intern 3 | DevOps | Sprint 3 | feature/anirudh |
 
 ## Key Decisions & Architecture
 
@@ -347,7 +410,7 @@ Each sprint:
 ## Next Steps
 
 - **Anishekh:** PR `#8` opened (`feature/fast-api-anishekh` → main) — awaiting team review
-- **Intern 3:** Start Sprint 3 (Docker, CI/CD)
+- **Anirudh:**: implement secure file handling and dependency vulnerability scanning 
 - **Team:** Review and merge FastAPI branch, daily standups
 
 See `PROJECT_STATE.md` for detailed sprint progress.

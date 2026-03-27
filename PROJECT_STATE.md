@@ -1,16 +1,16 @@
-# DPRS Project Status & Progress
+git sta# DPRS Project Status & Progress
 
-**Last Updated:** 2026-03-24
-**Project Status:** 63% Complete (19 of 30 days)
-**Overall Quality:** Excellent ✅ — Senior developer review applied
+**Last Updated:** [Today's Date]
+**Project Status:** 27% Complete (8 of 30 days)
+**Overall Quality:** Excellent ✅
 
 ---
 
-## Current Phase: FastAPI Service & Database Layer Complete
+## Current Phase: Core Module Complete, CLI In Progress
 
 ### Summary
 
-Sprints 1 and 2 are merged to main. A parallel feature branch (`feature/fast-api-anishekh`) has delivered a complete FastAPI REST API layer with SQLite-backed job persistence on top of the existing core processing engine. Sprint 3 (DevOps) is the immediate next step.
+The core data processing engine is complete and production-ready on the `feature/data-processing-engineer` branch. Sprint 2 (CLI & Reporting) is now in progress. The foundation is solid for Sprints 3-5.
 
 ---
 
@@ -94,11 +94,12 @@ Code Quality:
 
 ---
 
-### Sprint 2: CLI & Reporting ✅ COMPLETE (Days 9-13)
+### Sprint 2: CLI & Reporting 🔄 IN PROGRESS (Days 9-13)
 
 **Lead:** Intern 2 (Reporting & CLI Engineer)
 **Branch:** `feature/sprint-2-cli`
-**Status:** ✅ COMPLETE
+**Status:** 🔄 IN PROGRESS
+**Expected Completion:** 2-3 days
 
 **What We're Building:**
 - CLI interface using argparse
@@ -123,55 +124,10 @@ Code Quality:
 7. Merge to main
 
 **Deliverables:**
-- ✅ `cli/main.py` — Complete CLI interface (Bugs fixed)
-- ✅ `reporting/report_generator.py` — Report generation (Syntax issues fixed)
-- ✅ Integration tests with core module (`test_cli.py`, `test_reports.py`)
-- ✅ Documentation update
-
----
-
-### Feature Branch: FastAPI Service & Database ✅ COMPLETE
-
-**Lead:** Anishekh Prasad
-**Branch:** `feature/fast-api-anishekh`
-**Status:** ✅ COMPLETE — PR `#8` opened on 2026-03-24
-
-**What Was Built:**
-
-FastAPI Service:
-- ✅ `POST /upload` — validates file type, saves to `input/`, runs processing, returns job_id + statistics
-- ✅ `GET /jobs/{job_id}` — retrieves full job record with statistics or 404
-- ✅ `GET /health` — service health check
-- ✅ Pydantic request/response validation (`api/models.py`)
-- ✅ Auto-generated Swagger UI at `/docs`
-
-Database Layer:
-- ✅ SQLAlchemy ORM with SQLite (`api/database.py`, `api/db_models.py`)
-- ✅ `jobs` table with full schema (job_id, status, filename, rows, columns, headers, statistics, timestamps, error)
-- ✅ CRUD operations (`api/crud.py`): `create_job`, `update_job`, `get_job`
-- ✅ Jobs persist across server restarts (`dprs.db`)
-- ✅ DB connection via FastAPI dependency injection (`get_db`)
-
-**Files Created:**
-- `api/__init__.py`, `api/main.py`, `api/models.py`
-- `api/database.py`, `api/db_models.py`, `api/crud.py`
-- `api/routes/upload.py`, `api/routes/jobs.py`
-- `tests/test_api.py` (9 tests, all passing)
-
-**Metrics:**
-- Tests Passing: 53/53 (44 existing + 9 new API tests)
-- Test isolation: in-memory SQLite with `StaticPool` per test
-
-**Dependencies Added:** `fastapi`, `uvicorn[standard]`, `python-multipart`, `sqlalchemy`
-
-**Running the API:**
-```bash
-pip install -r requirements.txt
-uvicorn api.main:app --reload
-# Docs: http://127.0.0.1:8000/docs
-```
-
-**Merge Safety:** Touches `api/` (new directory), `core/data_processor.py` (refactored to Singleton + TypedDicts), `requirements.txt`, `config.json`, `.gitignore`, `tests/test_api.py`, documentation files (`README.md`, `ARCHITECTURE.md`, `PROJECT_STATE.md`). No overlap with the DevOps branch.
+- `cli/main.py` — Complete CLI interface
+- `reporting/report_generator.py` — Report generation
+- Integration tests with core module
+- Documentation update
 
 ---
 
@@ -180,7 +136,7 @@ uvicorn api.main:app --reload
 **Lead:** Intern 3 (System Integrity & DevOps Engineer)
 **Branch:** `feature/sprint-3-devops`
 **Status:** ⏳ UPCOMING
-**Estimated Start:** Immediately
+**Estimated Start:** After Sprint 1 PR merged
 
 **What We'll Build:**
 - Dockerfile for containerization
@@ -191,9 +147,8 @@ uvicorn api.main:app --reload
 
 **Dependencies:**
 - ✅ Sprint 1 (core) — SATISFIED
-- ✅ Sprint 2 (CLI) — SATISFIED
-- Can start now
-
+- Depends on Sprint 2 (CLI) — IN PROGRESS
+- Can work in parallel
 
 **Deliverables:**
 - `Dockerfile` — Container setup
@@ -239,12 +194,12 @@ uvicorn api.main:app --reload
 | Metric | Target | Current | Status |
 |--------|--------|---------|--------|
 | Test Coverage | ≥80% | 100% | ✅ EXCEEDS |
-| Tests Passing | 100% | 53/53 | ✅ EXCEEDS |
+| Tests Passing | 100% | 35/35 | ✅ EXCEEDS |
 | Code Quality | PEP 8 | 100% compliant | ✅ EXCEEDS |
 | Docstrings | 100% | 100% | ✅ COMPLETE |
 | Security Issues | 0 | 0 | ✅ CLEAN |
 | Technical Debt | 0 | 0 | ✅ CLEAN |
-| Days Complete | 19 | 19 | ✅ ON TIME |
+| Days Complete | 8 | 8 | ✅ ON TIME |
 
 ---
 
@@ -256,8 +211,7 @@ uvicorn api.main:app --reload
 main (production-ready)
   ↓
   ← feature/data-processing-engineer (Sprint 1 - COMPLETE)
-  ← feature/sprint-2-cli (Sprint 2 - COMPLETE)
-  ← feature/fast-api-anishekh (FastAPI + DB - COMPLETE, PR `#8` opened 2026-03-24)
+  ← feature/sprint-2-cli (IN PROGRESS)
   ← feature/sprint-3-devops (UPCOMING)
 ```
 
@@ -270,18 +224,18 @@ main (production-ready)
 # Awaiting team review and merge
 ```
 
-**Intern 2 (Complete):**
+**Intern 2 (In Progress):**
 ```bash
 # Clone from main (after Sprint 1 merged)
 git clone https://github.com/your-username/dprs.git
-git checkout feature/sprint-2-cli
+git checkout -b feature/sprint-2-cli
 
 # Has access to:
 # - core module (from Intern 1)
 # - utils module (logger, config)
 # - All tests and documentation
 
-# Built CLI on top of core module
+# Build CLI on top of core module
 ```
 
 **Intern 3 (Upcoming):**
@@ -311,15 +265,10 @@ After each sprint:
 
 ## Key Technical Decisions
 
-**In-Memory Storage (processing):**
-- CSV/JSON data is still loaded into memory for processing
+**In-Memory Storage:**
+- Current: Data loaded in memory
 - Suitable for: ≤100k rows
-- Future: Can migrate to chunked processing if needed
-
-**SQLite Database (job metadata):**
-- Job records (id, status, stats, timestamps) persist in `dprs.db`
-- Managed via SQLAlchemy ORM
-- URL configurable via `database_url` in `config.json`
+- Future: Can migrate to database if needed
 
 **Pure Python (No numpy/pandas):**
 - Current: Uses standard library only
@@ -335,34 +284,6 @@ After each sprint:
 - Current: All settings in config.json
 - Benefit: Different configs per environment
 - No code changes needed for deployments
-
----
-
-## Security & Code Quality Hardening ✅ COMPLETE (2026-03-24)
-
-Applied security review and code-quality fixes to `feature/fast-api-anishekh`:
-
-- **Path traversal fix** (`api/routes/upload.py`) — client-supplied filename is sanitised with `Path(filename).name` before building the disk path; original filename retained for display only
-- **Broad exception catch** (`api/routes/upload.py`) — processing block now catches `Exception` so unexpected errors mark the job `failed` instead of leaving it stuck in `processing`
-- **CRUD field validation** (`api/crud.py`) — `update_job` validates keys against `Job.__table__.columns`; unknown fields raise `ValueError`
-- **Exception chaining** (`core/data_processor.py`) — all three custom re-raise sites now use `raise ... from e` to preserve original tracebacks
-- **Cache-write logging** (`core/data_processor.py`) — silent `except Exception: pass` blocks replaced with `logger.debug(...)` so disk errors are visible in debug logs
-- **Unused import removed** (`tests/test_api.py`) — `from pathlib import Path` deleted
-- **Requirements pinned** (`requirements.txt`) — all six packages given `>=min,<next_major` bounds; strategy comment added
-
-Zero breaking changes — all 53 tests continue to pass, flake8 clean.
-
----
-
-## Code Review Refactor ✅ COMPLETE (2026-03-23)
-
-Applied senior developer review feedback to `core/data_processor.py`:
-
-- **Singleton pattern** — replaced module-level `global _loaded_data` with `DataProcessor` class using `__new__` Singleton (mirrors `utils/config.py`)
-- **Encapsulation** — all loading/stats logic moved into private/public methods on the class; module-level functions are now thin wrappers
-- **Explicit TypedDicts** — `LoadedData`, `LoadFileResult`, `ColumnStats` replace bare `Dict[str, Any]` for type-safe return values
-- **Memory note** — `rows = list(reader)` documented as intentional (full materialization required for multi-column stats pass); lazy/chunked loading noted as future backlog item
-- **Zero breaking changes** — all callers (`api/`, `cli/`, tests) required no modifications; 53/53 tests pass, flake8 clean
 
 ---
 
@@ -384,15 +305,12 @@ Applied senior developer review feedback to `core/data_processor.py`:
 
 ## Next Steps (Immediate)
 
-1. ✅ Sprint 1 complete — merged to main
-2. ✅ Sprint 2 complete — merged to main
-3. ✅ FastAPI + DB complete on `feature/fast-api-anishekh`
-4. ✅ Senior developer code review applied — `DataProcessor` Singleton, TypedDicts, encapsulation
-5. ✅ Security & code-quality hardening applied — path traversal fix, exception handling, CRUD validation, requirements pinned
-6. ✅ PR `#8` opened (2026-03-24): `feature/fast-api-anishekh` → main
-7. → Team review (target: 24 hours)
-8. → Merge to main
-9. → Intern 3 clones and starts Sprint 3 (DevOps — Docker, CI/CD)
+1. ✅ Sprint 1 complete on feature/data-processing-engineer
+2. → Create PR: feature/data-processing-engineer → main
+3. → Team review (target: 24 hours)
+4. → Merge to main
+5. → Intern 2 clones and starts Sprint 2
+6. → Intern 3 prepares Sprint 3 setup
 
 ---
 

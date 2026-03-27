@@ -33,6 +33,8 @@ build/
 DPRS_Comprehensive_PRD.md
 DPRS_Sprint_Plan.md
 
+# Logs and output
+logs/
 output/
 logs/
 .dprs_cache.json

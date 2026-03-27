@@ -449,7 +449,6 @@ def clear_data() -> None:
     Delegates to DataProcessor singleton."""
     _get_processor().clear()
 
-
 def process_file(
     filepath: str,
 ) -> Tuple[LoadFileResult, Dict[str, Any]]:
